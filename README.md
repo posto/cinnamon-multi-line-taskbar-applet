@@ -13,11 +13,12 @@ Installation
 5. Enable applet 'Cinnamon Multi-Line taskbar'
 6. Go to Menu > Cinnamon Settings > Panel
 7. Check 'Use customized panel size'
-8. Set bottom height to something around 50-70 pixels (depending on your theme)
+8. Set bottom height to something around 35-70 pixels (depending on your theme and number of rows for the taskbar)
 
 Configuring the applet
 ----------------------
 1. File ```applet.js``` contains two constants: ```TASKBAR_ROW_COUNT``` and ```MIN_BUTTONS_PER_LINE```
+2. Restart Cinnamon to see the changes
 
 Known issues
 ------------
