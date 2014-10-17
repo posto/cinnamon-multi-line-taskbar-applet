@@ -16,7 +16,7 @@ global.stage.get_actor_at_pos(Clutter.PickMode.ALL, 427, 1046).get_parent().get_
 
 /* APPLET SETTINGS */
 // number of rows for the taskbar
-const TASKBAR_ROW_COUNT = 3;
+const TASKBAR_ROW_COUNT = 2;
 // minimum number of tasks on one line, before we start filling in the next line
 const MIN_BUTTONS_PER_LINE = 8;
 
@@ -35,7 +35,7 @@ const Tooltips = imports.ui.tooltips;
 const DND = imports.ui.dnd;
 
 const PANEL_ICON_SIZE = 24; // this is for the spinner when loading
-const DEFAULT_ICON_SIZE = 16; // too bad this can't be defined in theme (cinnamon-app.create_icon_texture returns a clutter actor, not a themable object -
+const DEFAULT_ICON_SIZE = 24; // too bad this can't be defined in theme (cinnamon-app.create_icon_texture returns a clutter actor, not a themable object -
                               // probably something that could be addressed
 const SPINNER_ANIMATION_TIME = 1;
 const ICON_HEIGHT_FACTOR = .64;
@@ -874,7 +874,7 @@ MyApplet.prototype = {
             let metaWindow = this._windows[i].metaWindow;
             if (metaWindow.get_workspace().index() == global.screen.get_active_workspace_index()
                       || metaWindow.is_on_all_workspaces()) {
-                this._addWindowBtnToTaskbar(this._windows[i]);
+                this._addWindowBtnToTaskbar(this._windows[i], i);
                 this._windows[i].actor.show();
             } else {
                 this._windows[i].actor.hide();
@@ -948,11 +948,13 @@ try {
             appbutton.actor.hide();
         } else {
             // add actor only if it should be shown
-            this._addWindowBtnToTaskbar(appbutton);
+            this._addWindowBtnToTaskbar(appbutton, this._windows.length - 1);
         }
 } catch (e) {
             global.logError(e);
         }
+
+        this._refreshItems();
     },
 
     _clearTaskbarItems: function() {
@@ -963,28 +965,21 @@ try {
         }
     },
 
-    _addWindowBtnToTaskbar: function(appbutton) {
+    _addWindowBtnToTaskbar: function(appbutton, index) {
         _multirowtaskbarlog("adding button to grid...");
-        
-        let idx_lowest_nr_of_windows = 0;
 
-        for ( let i=0; i<this.myactor.length; i++ ) {
-            _multirowtaskbarlog("For index=" + idx_lowest_nr_of_windows + " childcount=" + this.myactor[idx_lowest_nr_of_windows].get_children().length);
-            _multirowtaskbarlog("For index=" + i + " childcount=" + this.myactor[i].get_children().length);
-
-            // if a new line exists with less children than our index AND the current row is not filled-in yet, then use the new line
-            if (this.myactor[i].get_children().length < this.myactor[idx_lowest_nr_of_windows].get_children().length && 
-                (this.myactor[idx_lowest_nr_of_windows].get_children().length > MIN_BUTTONS_PER_LINE)) {
-                idx_lowest_nr_of_windows = i;
-                _multirowtaskbarlog("Changed index of 'lowest-nr-of-windows' to " + i);
-            }
+        let idx = 0;
+        if (this._windows.length <= MIN_BUTTONS_PER_LINE * TASKBAR_ROW_COUNT) {
+            idx = Math.floor(index / MIN_BUTTONS_PER_LINE);
+        } else {
+            idx = Math.floor(TASKBAR_ROW_COUNT * index / this._windows.length);
         }
 
         // myactor is an StBoxLayout.windowList -- effectively the taskbar
         // appbutton.actor is St.Bin.window-list-item-box, the element that contains a task in the taskbar
-        this.myactor[idx_lowest_nr_of_windows].add(appbutton.actor);      
+        this.myactor[Math.min(this.myactor.length - 1, idx)].add(appbutton.actor);
 
-        _multirowtaskbarlog("For index=" + idx_lowest_nr_of_windows + " childcount=" + this.myactor[idx_lowest_nr_of_windows].get_children().length);
+        _multirowtaskbarlog("For index=" + idx + " childcount=" + this.myactor[idx].get_children().length);
         _multirowtaskbarlog("adding button to grid...DONE");
 
     },
@@ -1000,6 +995,8 @@ try {
                 break;
             }
         }
+
+        this._refreshItems();
     },
     
     _changeWorkspaces: function() {
