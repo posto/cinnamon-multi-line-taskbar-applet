@@ -19,6 +19,8 @@ global.stage.get_actor_at_pos(Clutter.PickMode.ALL, 427, 1046).get_parent().get_
 const TASKBAR_ROW_COUNT = 3;
 // minimum number of tasks on one line, before we start filling in the next line
 const MIN_BUTTONS_PER_LINE = 8;
+// shall the taskbar include windows from all workspaces (1) or just from the current workspace (0)?
+const TASKBAR_ALL_WORKSPACES = 1;
 
 /* CODE, DO NOT CHANGE ANYTHING BELOW THIS LINE */
 const Applet = imports.ui.applet;
@@ -873,7 +875,8 @@ MyApplet.prototype = {
         for ( let i = 0; i < this._windows.length; ++i ) {
             let metaWindow = this._windows[i].metaWindow;
             if (metaWindow.get_workspace().index() == global.screen.get_active_workspace_index()
-                      || metaWindow.is_on_all_workspaces()) {
+                      || metaWindow.is_on_all_workspaces()
+                      || TASKBAR_ALL_WORKSPACES == 1) {
                 this._addWindowBtnToTaskbar(this._windows[i]);
                 this._windows[i].actor.show();
             } else {
@@ -944,7 +947,7 @@ try {
         let appbutton = new AppMenuButton(this, metaWindow, true,      this.orientation, this._panelHeight);
         this._windows.push(appbutton);
 
-        if (metaWorkspace.index() != global.screen.get_active_workspace_index()) {
+        if (TASKBAR_ALL_WORKSPACES == 0 && metaWorkspace.index() != global.screen.get_active_workspace_index()) {
             appbutton.actor.hide();
         } else {
             // add actor only if it should be shown
