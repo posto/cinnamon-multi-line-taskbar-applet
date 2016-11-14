@@ -21,6 +21,8 @@ const TASKBAR_ROW_COUNT = 3;
 const MIN_BUTTONS_PER_LINE = 8;
 // shall the taskbar include windows from all workspaces (1) or just from the current workspace (0)?
 const TASKBAR_ALL_WORKSPACES = 1;
+// behavior on clicking the middle mouse button: 0=close window (old style), 1="clone" (Windows-7 style)
+const TASK_MIDDLECLICK_ACTION=1
 
 /* CODE, DO NOT CHANGE ANYTHING BELOW THIS LINE */
 const Applet = imports.ui.applet;
@@ -443,7 +445,11 @@ AppMenuButton.prototype = {
             }
             this._windowHandle(false);
         } else if (Cinnamon.get_event_state(event) & Clutter.ModifierType.BUTTON2_MASK) {
-            this.metaWindow.delete(global.get_current_time());
+            if (TASK_MIDDLECLICK_ACTION == 0) {
+                this.metaWindow.delete(global.get_current_time());
+            } else if (TASK_MIDDLECLICK_ACTION == 1) {
+                this.app.open_new_window(global.get_current_time());
+            }
         } else if (Cinnamon.get_event_state(event) & Clutter.ModifierType.BUTTON3_MASK) {
             this.rightClickMenu.mouseEvent = event;
             this.rightClickMenu.toggle();   
