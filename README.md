@@ -17,7 +17,13 @@ Installation
 
 Configuring the applet
 ----------------------
-1. File ```applet.js``` contains two constants: ```TASKBAR_ROW_COUNT``` and ```MIN_BUTTONS_PER_LINE```
+1. File `applet.js` contains a few constants, which you can adjust to meet your wishes:
+    * `TASKBAR_ROW_COUNT`: number of rows for the taskbar
+    * `MIN_BUTTONS_PER_LINE`: minimum number of tasks on one line, before we start filling in the next line
+    * `TASKBAR_ALL_WORKSPACES`: shall the taskbar include windows from all workspaces (1) or just from the current workspace (0)?
+    * `TASK_MIDDLECLICK_ACTION`: behavior on clicking the middle mouse button: 0=close window (old style), 1="clone" (Windows-7 style)
+    * `PANEL_ICON_SIZE`: this is for the spinner when loading
+    * `DEFAULT_ICON_SIZE`: height of the tasks themselves
 2. Restart Cinnamon to see the changes
 
 Known issues
