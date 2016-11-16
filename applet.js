@@ -1,3 +1,25 @@
+// Multi-line taskbar applet for Cinnamon (Linux Mint)
+//
+// This is a clone of the original Cinnamon applet that adds support
+// for a multi-line taskbar.
+//
+// Author: Dumitru Postoronca (https://github.com/posto)
+// Contributors:
+//  * Balázs Németh (https://github.com/nbali)
+//  * Izzy (https://github.com/IzzySoft)
+//
+// License: GPLv2 (see the COPYING file)
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+
+
 /**
 
 StBoxLayout panelRight
@@ -54,20 +76,20 @@ AppMenuButtonRightClickMenu.prototype = {
     __proto__: PopupMenu.PopupMenu.prototype,
 
     _init: function(actor, metaWindow, orientation) {
-        //take care of menu initialization        
-        PopupMenu.PopupMenu.prototype._init.call(this, actor, 0.0, orientation, 0);        
+        //take care of menu initialization
+        PopupMenu.PopupMenu.prototype._init.call(this, actor, 0.0, orientation, 0);
         Main.uiGroup.add_actor(this.actor);
         //Main.chrome.addActor(this.actor, { visibleInOverview: true,
         //                                   affectsStruts: false });
         this.actor.hide();
         this.window_list = actor._delegate._applet._windows;
-        actor.connect('key-press-event', Lang.bind(this, this._onSourceKeyPress));        
-        this.connect('open-state-changed', Lang.bind(this, this._onToggled));        
+        actor.connect('key-press-event', Lang.bind(this, this._onSourceKeyPress));
+        this.connect('open-state-changed', Lang.bind(this, this._onToggled));
 
         this.metaWindow = metaWindow;
 
         this.itemCloseWindow = new PopupMenu.PopupMenuItem(_("Close"));
-        this.itemCloseWindow.connect('activate', Lang.bind(this, this._onCloseWindowActivate));        
+        this.itemCloseWindow.connect('activate', Lang.bind(this, this._onCloseWindowActivate));
 
         this.itemCloseAllWindows = new PopupMenu.PopupMenuItem(_("Close all"));
         this.itemCloseAllWindows.connect('activate', Lang.bind(this, this._onCloseAllActivate));
@@ -79,17 +101,17 @@ AppMenuButtonRightClickMenu.prototype = {
             this.itemMinimizeWindow = new PopupMenu.PopupMenuItem(_("Restore"));
         else
             this.itemMinimizeWindow = new PopupMenu.PopupMenuItem(_("Minimize"));
-        this.itemMinimizeWindow.connect('activate', Lang.bind(this, this._onMinimizeWindowActivate));        
-        
+        this.itemMinimizeWindow.connect('activate', Lang.bind(this, this._onMinimizeWindowActivate));
+
         this.itemMaximizeWindow = new PopupMenu.PopupMenuItem(_("Maximize"));
-        this.itemMaximizeWindow.connect('activate', Lang.bind(this, this._onMaximizeWindowActivate));  
-        
+        this.itemMaximizeWindow.connect('activate', Lang.bind(this, this._onMaximizeWindowActivate));
+
         this.itemMoveToLeftWorkspace = new PopupMenu.PopupMenuItem(_("Move to left workspace"));
         this.itemMoveToLeftWorkspace.connect('activate', Lang.bind(this, this._onMoveToLeftWorkspace));
-        
+
         this.itemMoveToRightWorkspace = new PopupMenu.PopupMenuItem(_("Move to right workspace"));
-        this.itemMoveToRightWorkspace.connect('activate', Lang.bind(this, this._onMoveToRightWorkspace));      
-        
+        this.itemMoveToRightWorkspace.connect('activate', Lang.bind(this, this._onMoveToRightWorkspace));
+
         this.itemOnAllWorkspaces = new PopupMenu.PopupMenuItem(_("Visible on all workspaces"));
         this.itemOnAllWorkspaces.connect('activate', Lang.bind(this, this._toggleOnAllWorkspaces));
 
@@ -102,11 +124,11 @@ AppMenuButtonRightClickMenu.prototype = {
             this.addMenuItem(this.itemCloseOtherWindows);
             this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
             this.addMenuItem(this.itemMinimizeWindow);
-            this.addMenuItem(this.itemMaximizeWindow);            
-            this.addMenuItem(this.itemCloseWindow);                        
+            this.addMenuItem(this.itemMaximizeWindow);
+            this.addMenuItem(this.itemCloseWindow);
         }
         else {
-            this.addMenuItem(this.itemCloseWindow);            
+            this.addMenuItem(this.itemCloseWindow);
             this.addMenuItem(this.itemMaximizeWindow);
             this.addMenuItem(this.itemMinimizeWindow);
             this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
@@ -120,10 +142,10 @@ AppMenuButtonRightClickMenu.prototype = {
      },
 
      _onToggled: function(actor, event){
-	if (!event)
+    if (!event)
             return;
 
-	if (this.metaWindow.is_on_all_workspaces()) {
+    if (this.metaWindow.is_on_all_workspaces()) {
             this.itemOnAllWorkspaces.label.set_text(_("Only on this workspace"));
             this.itemMoveToLeftWorkspace.actor.hide();
             this.itemMoveToRightWorkspace.actor.hide();
@@ -133,7 +155,7 @@ AppMenuButtonRightClickMenu.prototype = {
                 this.itemMoveToLeftWorkspace.actor.show();
             else
                 this.itemMoveToLeftWorkspace.actor.hide();
-            
+
             if (this.metaWindow.get_workspace().get_neighbor(Meta.MotionDirection.RIGHT) != this.metaWindow.get_workspace())
                 this.itemMoveToRightWorkspace.actor.show();
             else
@@ -145,7 +167,7 @@ AppMenuButtonRightClickMenu.prototype = {
             this.itemMaximizeWindow.label.set_text(_("Maximize"));
         }
     },
-    
+
     _onWindowMinimized: function(actor, event){
     },
 
@@ -188,16 +210,16 @@ AppMenuButtonRightClickMenu.prototype = {
         }
     },
 
-    _onMaximizeWindowActivate: function(actor, event){      
+    _onMaximizeWindowActivate: function(actor, event){
         if (this.metaWindow.get_maximized()){
             this.metaWindow.unmaximize(Meta.MaximizeFlags.HORIZONTAL | Meta.MaximizeFlags.VERTICAL);
         }else{
             this.metaWindow.maximize(Meta.MaximizeFlags.HORIZONTAL | Meta.MaximizeFlags.VERTICAL);
         }
     },
-    
+
     _onMoveToLeftWorkspace: function(actor, event){
-        let workspace = this.metaWindow.get_workspace().get_neighbor(Meta.MotionDirection.LEFT); 
+        let workspace = this.metaWindow.get_workspace().get_neighbor(Meta.MotionDirection.LEFT);
         if (workspace) {
             this.actor.destroy();
             this.metaWindow.change_workspace(workspace);
@@ -206,7 +228,7 @@ AppMenuButtonRightClickMenu.prototype = {
     },
 
     _onMoveToRightWorkspace: function(actor, event){
-        let workspace = this.metaWindow.get_workspace().get_neighbor(Meta.MotionDirection.RIGHT); 
+        let workspace = this.metaWindow.get_workspace().get_neighbor(Meta.MotionDirection.RIGHT);
         if (workspace) {
             this.actor.destroy();
             this.metaWindow.change_workspace(workspace);
@@ -247,29 +269,28 @@ function AppMenuButton(applet, metaWindow, animation, orientation, panel_height)
 AppMenuButton.prototype = {
 //    __proto__ : AppMenuButton.prototype,
 
-    
     _init: function(applet, metaWindow, animation, orientation, panel_height) {
-               
-	_multirowtaskbarlog("AppMenuButton(" + applet + ", height: " + panel_height);
-        this.actor = new St.Bin({ style_class: 'window-list-item-box',
-								  reactive: true,
-								  can_focus: true,
-								  x_fill: true,
-								  y_fill: false,
-								  track_hover: true });
 
-	if (orientation == St.Side.TOP) 
-		this.actor.add_style_class_name('window-list-item-box-top');
-	else
-		this.actor.add_style_class_name('window-list-item-box-bottom');
-      
+    _multirowtaskbarlog("AppMenuButton(" + applet + ", height: " + panel_height);
+        this.actor = new St.Bin({ style_class: 'window-list-item-box',
+                                  reactive: true,
+                                  can_focus: true,
+                                  x_fill: true,
+                                  y_fill: false,
+                                  track_hover: true });
+
+    if (orientation == St.Side.TOP)
+        this.actor.add_style_class_name('window-list-item-box-top');
+    else
+        this.actor.add_style_class_name('window-list-item-box-bottom');
+
         this.actor._delegate = this;
         this.actor.connect('button-release-event', Lang.bind(this, this._onButtonRelease));
 
-		this.metaWindow = metaWindow;	
+        this.metaWindow = metaWindow;
 
-        this._applet = applet;	
-		
+        this._applet = applet;
+
         let bin = new St.Bin({ name: 'appMenu' });
         this.actor.set_child(bin);
 
@@ -278,11 +299,11 @@ AppMenuButton.prototype = {
         bin.set_child(this._container);
 
         this._container.connect('get-preferred-width',
-								Lang.bind(this, this._getContentPreferredWidth));
+                                Lang.bind(this, this._getContentPreferredWidth));
         this._container.connect('get-preferred-height',
-								Lang.bind(this, this._getContentPreferredHeight));
+                                Lang.bind(this, this._getContentPreferredHeight));
         this._container.connect('allocate', Lang.bind(this, this._contentAllocate));
-        
+
         this._iconBox = new Cinnamon.Slicer({ name: 'appMenuIcon' });
         this._iconBox.connect('style-changed',
                               Lang.bind(this, this._onIconBoxStyleChanged));
@@ -293,10 +314,10 @@ AppMenuButton.prototype = {
         this._container.add_actor(this._label);
 
         this._iconBottomClip = 0;
-		if (!Main.overview.visible || !Main.expo.visible)
-        	this._visible = true;
-		else
-			this._visible = false;
+        if (!Main.overview.visible || !Main.expo.visible)
+            this._visible = true;
+        else
+            this._visible = false;
         if (!this._visible)
             this.actor.hide();
         Main.overview.connect('hiding', Lang.bind(this, function () {
@@ -305,20 +326,20 @@ AppMenuButton.prototype = {
         Main.overview.connect('showing', Lang.bind(this, function () {
             this.hide();
         }));
-		Main.expo.connect('hiding', Lang.bind(this, function () {
+        Main.expo.connect('hiding', Lang.bind(this, function () {
             this.show();
         }));
         Main.expo.connect('showing', Lang.bind(this, function () {
             this.hide();
         }));
         this.actor.connect('destroy', Lang.bind(this, this._onDestroy));
-        
+
         this._updateCaptionId = this.metaWindow.connect('notify::title', Lang.bind(this, function () {
             let title = this.getDisplayTitle();
             this._label.set_text(title);
             if (this._tooltip) this._tooltip.set_text(title);
         }));
-                
+
         this._spinner = new Panel.AnimatedIcon('process-working.svg', PANEL_ICON_SIZE);
         this._container.add_actor(this._spinner.actor);
         this._spinner.actor.lower_bottom();
@@ -331,24 +352,24 @@ AppMenuButton.prototype = {
             this._label.set_text("[" + title + "]");
         else
             this._label.set_text(title);
-        
+
         if(animation){
-			this.startAnimation(); 
-			this.stopAnimation();
-		}
-		
+            this.startAnimation();
+            this.stopAnimation();
+        }
+
         //set up the right click menu
         this._menuManager = new PopupMenu.PopupMenuManager(this);
         this.rightClickMenu = new AppMenuButtonRightClickMenu(this.actor, this.metaWindow, orientation);
         this._menuManager.addMenu(this.rightClickMenu);
-        
+
         this._tooltip = new Tooltips.PanelItemTooltip(this, title, orientation);
-        
+
         this._draggable = DND.makeDraggable(this.actor);
         this._draggable.connect('drag-begin', Lang.bind(this, this._onDragBegin));
         this._draggable.connect('drag-cancelled', Lang.bind(this, this._onDragCancelled));
         this._draggable.connect('drag-end', Lang.bind(this, this._onDragEnd));
-        
+
         this.on_panel_edit_mode_changed();
         global.settings.connect('changed::panel-edit-mode', Lang.bind(this, this.on_panel_edit_mode_changed));
         global.settings.connect('changed::window-list-applet-scroll', Lang.bind(this, this.on_scroll_mode_changed));
@@ -356,10 +377,10 @@ AppMenuButton.prototype = {
         this.scroll_connector = null;
         this.on_scroll_mode_changed();
     },
-    
+
     on_panel_edit_mode_changed: function() {
         this._draggable.inhibit = global.settings.get_boolean("panel-edit-mode");
-    }, 
+    },
 
     on_scroll_mode_changed: function() {
         let scrollable = global.settings.get_boolean("window-list-applet-scroll");
@@ -425,23 +446,23 @@ AppMenuButton.prototype = {
         this._tooltip.destroy();
         this.rightClickMenu.destroy();
     },
-    
+
     doFocus: function() {
-        if (this.metaWindow.has_focus() && !this.metaWindow.minimized) {                                     
-        	this.actor.add_style_pseudo_class('focus');    
-            this.actor.remove_style_class_name("window-list-item-demands-attention");    	
+        if (this.metaWindow.has_focus() && !this.metaWindow.minimized) {
+        	this.actor.add_style_pseudo_class('focus');
+            this.actor.remove_style_class_name("window-list-item-demands-attention");
             this.actor.remove_style_class_name("window-list-item-demands-attention-top");
-        }        		    	        
-        else {            
-          	this.actor.remove_style_pseudo_class('focus');        		
-        }	    	                
+        }
+        else {
+            this.actor.remove_style_pseudo_class('focus');
+        }
     },
-    
+
     _onButtonRelease: function(actor, event) {
         this._tooltip.hide();
         if ( Cinnamon.get_event_state(event) & Clutter.ModifierType.BUTTON1_MASK ) {
             if ( this.rightClickMenu.isOpen ) {
-                this.rightClickMenu.toggle();                
+                this.rightClickMenu.toggle();
             }
             this._windowHandle(false);
         } else if (Cinnamon.get_event_state(event) & Clutter.ModifierType.BUTTON2_MASK) {
@@ -452,8 +473,8 @@ AppMenuButton.prototype = {
             }
         } else if (Cinnamon.get_event_state(event) & Clutter.ModifierType.BUTTON3_MASK) {
             this.rightClickMenu.mouseEvent = event;
-            this.rightClickMenu.toggle();   
-        }   
+            this.rightClickMenu.toggle();
+        }
     },
 
     _windowHandle: function(fromDrag){
@@ -461,13 +482,13 @@ AppMenuButton.prototype = {
             if (fromDrag){
                 return;
             }
-            
+
             this.metaWindow.minimize(global.get_current_time());
             this.actor.remove_style_pseudo_class('focus');
         }
         else {
             if (this.metaWindow.minimized) {
-                this.metaWindow.unminimize(global.get_current_time()); 
+                this.metaWindow.unminimize(global.get_current_time());
             }
             this.metaWindow.activate(global.get_current_time());
             this.actor.add_style_pseudo_class('focus');
@@ -476,7 +497,7 @@ AppMenuButton.prototype = {
 
     handleDragOver: function(source, actor, x, y, time) {
         if (source instanceof AppMenuButton) return DND.DragMotionResult.CONTINUE;
-        
+
         if (typeof(this._applet.dragEnterTime) == 'undefined') {
             this._applet.dragEnterTime = time;
         } else {
@@ -485,17 +506,17 @@ AppMenuButton.prototype = {
                 this._applet.dragEnterTime = time;
             }
         }
-                
+
         if (time > (this._applet.dragEnterTime + 300)) {
             this._windowHandle(true);
         }
         return DND.DragMotionResult.NO_DROP;
     },
-    
+
     acceptDrop: function(source, actor, x, y, time) {
         return false;
     },
-    
+
     show: function() {
         if (this._visible)
             return;
@@ -548,7 +569,7 @@ AppMenuButton.prototype = {
         alloc.min_size = minSize; // minimum size just enough for icon if we ever get that many apps going
         alloc.natural_size = naturalSize;
         [minSize, naturalSize] = this._label.get_preferred_width(forHeight);
-	alloc.min_size = alloc.min_size + Math.max(0, minSize - Math.floor(alloc.min_size / 2));
+        alloc.min_size = alloc.min_size + Math.max(0, minSize - Math.floor(alloc.min_size / 2));
         alloc.natural_size = 150;
     },
 
@@ -615,7 +636,7 @@ AppMenuButton.prototype = {
             this._spinner.actor.allocate(childBox, flags);
         }
     },
-    
+
     getDragActor: function() {
         return new Clutter.Clone({ source: this.actor });
     },
@@ -625,7 +646,7 @@ AppMenuButton.prototype = {
     getDragActorSource: function() {
         return this.actor;
     },
-    
+
     set_icon: function(panel_height) {
       if (global.settings.get_boolean('panel-scale-text-icons') && global.settings.get_boolean('panel-resizable')) {
         this.iconSize = Math.round(panel_height * ICON_HEIGHT_FACTOR);
@@ -654,27 +675,27 @@ MyAppletBox.prototype = {
         this.actor = new St.BoxLayout({ name: 'windowList',
                                        	style_class: 'window-list-box' });
         this.actor._delegate = this;
-        
+
         this._applet = applet;
-        
+
         this._dragPlaceholder = null;
         this._dragPlaceholderPos = -1;
         this._animatingPlaceholdersCount = 0;
     },
-    
+
     handleDragOver: function(source, actor, x, y, time) {
         if (!(source instanceof AppMenuButton)) return DND.DragMotionResult.NO_DROP;
-        
+
         let children = this.actor.get_children();
         let windowPos = children.indexOf(source.actor);
-        
+
         let pos = 0;
-        
+
         for (var i in children){
             if (x > children[i].get_allocation_box().x1 + children[i].width / 2) pos = i;
         }
-        
-        if (pos != this._dragPlaceholderPos) {            
+
+        if (pos != this._dragPlaceholderPos) {
             this._dragPlaceholderPos = pos;
 
             // Don't allow positioning before or after self
@@ -711,22 +732,22 @@ MyAppletBox.prototype = {
             if (fadeIn)
                 this._dragPlaceholder.animateIn();
         }
-        
+
         return DND.DragMotionResult.MOVE_DROP;
     },
-    
-    acceptDrop: function(source, actor, x, y, time) {  
+
+    acceptDrop: function(source, actor, x, y, time) {
         if (!(source instanceof AppMenuButton)) return false;
-        
+
         this.actor.move_child(source.actor, this._dragPlaceholderPos);
-        
+
         this._clearDragPlaceholder();
         actor.destroy();
-        
+
         return true;
     },
-    
-    _clearDragPlaceholder: function() {        
+
+    _clearDragPlaceholder: function() {
         if (this._dragPlaceholder) {
             this._dragPlaceholder.animateOutAndDestroy();
             this._dragPlaceholder = null;
@@ -742,13 +763,13 @@ function MyApplet(orientation, panel_height) {
 MyApplet.prototype = {
     __proto__: Applet.Applet.prototype,
 
-    _init: function(orientation, panel_height) {   
+    _init: function(orientation, panel_height) {
         _multirowtaskbarlog("MyApplet._init(height: " + panel_height);
-     
+
         Applet.Applet.prototype._init.call(this, orientation, panel_height);
         this.actor.set_track_hover(false);
 
-        try {                    
+        try {
             this.orientation = orientation;
             this.dragInProgress = false;
 
@@ -813,50 +834,50 @@ MyApplet.prototype = {
                                             Lang.bind(this, this._onMaximize));
             global.window_manager.connect('map',
                                             Lang.bind(this, this._onMap));
-                                            
-            Main.expo.connect('showing', Lang.bind(this, 
-	    					function(){	global.window_manager.disconnect(this.switchWorkspaceHandler);}));
-	    	Main.expo.connect('hidden', Lang.bind(this, 
-							function(){	this.switchWorkspaceHandler=global.window_manager.connect('switch-workspace', 
-												Lang.bind(this, this._refreshItems)); 
-												this._refreshItems();}));
 
-	    	Main.overview.connect('showing', Lang.bind(this, 
-							function(){	global.window_manager.disconnect(this.switchWorkspaceHandler);}));
-	    	Main.overview.connect('hidden', Lang.bind(this, 
-							function(){	this.switchWorkspaceHandler=global.window_manager.connect('switch-workspace', 
-												Lang.bind(this, this._refreshItems)); 
-												this._refreshItems();}));
-            
+            Main.expo.connect('showing', Lang.bind(this,
+                            function(){ global.window_manager.disconnect(this.switchWorkspaceHandler);}));
+            Main.expo.connect('hidden', Lang.bind(this,
+                            function(){ this.switchWorkspaceHandler=global.window_manager.connect('switch-workspace',
+                                            Lang.bind(this, this._refreshItems));
+                                        this._refreshItems();}));
+
+            Main.overview.connect('showing', Lang.bind(this,
+                            function(){ global.window_manager.disconnect(this.switchWorkspaceHandler);}));
+            Main.overview.connect('hidden', Lang.bind(this,
+                            function(){ this.switchWorkspaceHandler=global.window_manager.connect('switch-workspace',
+                                            Lang.bind(this, this._refreshItems));
+                                        this._refreshItems();}));
+
             this._workspaces = [];
             this._changeWorkspaces();
             global.screen.connect('notify::n-workspaces',
                                     Lang.bind(this, this._changeWorkspaces));
             global.display.connect('window-demands-attention', Lang.bind(this, this._onWindowDemandsAttention));
             global.display.connect('window-marked-urgent', Lang.bind(this, this._onWindowDemandsAttention));
-                                    
-            // this._container.connect('allocate', Lang.bind(Main.panel, this._allocateBoxes)); 
-            
+
+            // this._container.connect('allocate', Lang.bind(Main.panel, this._allocateBoxes));
+
             global.settings.connect('changed::panel-edit-mode', Lang.bind(this, this.on_panel_edit_mode_changed));
         }
         catch (e) {
             global.logError(e);
         }
     },
-    
+
     on_applet_clicked: function(event) {
-            
+
     },
 
     on_panel_edit_mode_changed: function() {
         this.actor.reactive = global.settings.get_boolean("panel-edit-mode");
-    }, 
-    
-           
+    },
+
+
     _onWindowDemandsAttention : function(display, window) {
         for ( let i=0; i<this._windows.length; ++i ) {
-            if ( this._windows[i].metaWindow == window ) {                
-                this._windows[i].actor.add_style_class_name("window-list-item-demands-attention");                
+            if ( this._windows[i].metaWindow == window ) {
+                this._windows[i].actor.add_style_class_name("window-list-item-demands-attention");
             }
         }
     },
@@ -872,7 +893,7 @@ MyApplet.prototype = {
     on_panel_height_changed: function() {
         this._refreshItems();
     },
-    
+
     _refreshItems: function() {
         _multirowtaskbarlog("_refreshItems");
         // clean all buttons, for now
@@ -899,50 +920,50 @@ MyApplet.prototype = {
                 let windowReference = this._windows[i];
                 let menuReference = this._windows[i].rightClickMenu;
                 let title = windowReference.getDisplayTitle();
-                
+
                 if (state == 'minimize') {
                     windowReference._label.set_text("["+ title +"]");
                     menuReference.itemMinimizeWindow.label.set_text(_("Restore"));
-                    
+
                     return;
                 } else if (state == 'map') {
                     windowReference._label.set_text(title);
                     menuReference.itemMinimizeWindow.label.set_text(_("Minimize"));
-                    
+
                     return;
                 }
             }
         }
     },
-    
+
     _onMinimize: function(cinnamonwm, actor) {
         this._onWindowStateChange('minimize', actor);
     },
-    
+
     _onMaximize: function(cinnamonwm, actor) {
         this._onWindowStateChange('maximize', actor);
     },
-    
+
     _onMap: function(cinnamonwm, actor) {
-    	/* Note by Clem: The call to this._refreshItems() below doesn't look necessary. 
-    	 * When a window is mapped in a quick succession of times (for instance if 
-    	 * the user repeatedly minimize/unminimize the window by clicking on the window list, 
-    	 * or more often when the showDesktop button maps a lot of minimized windows in a quick succession.. 
-    	 * when this happens, many calls to refreshItems are made and this creates a memory leak. 
-    	 * It also slows down all the mapping and so it takes time for all windows to get unminimized after showDesktop is clicked.
-    	 * 
-    	 * For now this was removed. If it needs to be put back, this isn't the place. 
-    	 * If showDesktop needs it, then it should only call it once, not once per window.
-    	 */ 
+        /* Note by Clem: The call to this._refreshItems() below doesn't look necessary.
+         * When a window is mapped in a quick succession of times (for instance if
+         * the user repeatedly minimize/unminimize the window by clicking on the window list,
+         * or more often when the showDesktop button maps a lot of minimized windows in a quick succession..
+         * when this happens, many calls to refreshItems are made and this creates a memory leak.
+         * It also slows down all the mapping and so it takes time for all windows to get unminimized after showDesktop is clicked.
+         *
+         * For now this was removed. If it needs to be put back, this isn't the place.
+         * If showDesktop needs it, then it should only call it once, not once per window.
+         */
         //this._refreshItems();
         this._onWindowStateChange('map', actor);
     },
-  
+
     _windowAdded: function(metaWorkspace, metaWindow) {
 try {
-	    _multirowtaskbarlog("_windowAdded(" + metaWindow);
+        _multirowtaskbarlog("_windowAdded(" + metaWindow);
         if (!Main.isInteresting(metaWindow))
-            return;        
+            return;
         for ( let i=0; i<this._windows.length; ++i ) {
             if ( this._windows[i].metaWindow == metaWindow ) {
                 return;
@@ -1007,7 +1028,7 @@ try {
 
         this._refreshItems();
     },
-    
+
     _changeWorkspaces: function() {
         for ( let i=0; i<this._workspaces.length; ++i ) {
             let ws = this._workspaces[i];
@@ -1025,56 +1046,56 @@ try {
                                     Lang.bind(this, this._windowRemoved));
         }
     },
-    
-    _allocateBoxes: function(container, box, flags) {	
+
+    _allocateBoxes: function(container, box, flags) {
         _multirowtaskbarlog("MyApplet._allocateBoxes(" + container + ", " + box);
-		let allocWidth = box.x2 - box.x1;
-		let allocHeight = box.y2 - box.y1;
+        let allocWidth = box.x2 - box.x1;
+        let allocHeight = box.y2 - box.y1;
 
         _multirowtaskbarlog("MyApplet._allocateBoxes(allocWidth:  " + allocWidth);
         _multirowtaskbarlog("MyApplet._allocateBoxes(allocHeight: " + allocHeight);
 
 
-		let [leftMinWidth, leftNaturalWidth] = this._leftBox.get_preferred_width(-1);
-		let [centerMinWidth, centerNaturalWidth] = this._centerBox.get_preferred_width(-1);
-		let [rightMinWidth, rightNaturalWidth] = this._rightBox.get_preferred_width(-1);
+        let [leftMinWidth, leftNaturalWidth] = this._leftBox.get_preferred_width(-1);
+        let [centerMinWidth, centerNaturalWidth] = this._centerBox.get_preferred_width(-1);
+        let [rightMinWidth, rightNaturalWidth] = this._rightBox.get_preferred_width(-1);
 
-		let sideWidth, centerWidth;
-		centerWidth = centerNaturalWidth;
-		sideWidth = (allocWidth - centerWidth) / 2;
+        let sideWidth, centerWidth;
+        centerWidth = centerNaturalWidth;
+        sideWidth = (allocWidth - centerWidth) / 2;
 
-		let childBox = new Clutter.ActorBox();
+        let childBox = new Clutter.ActorBox();
 
-		childBox.y1 = 0;
-		childBox.y2 = allocHeight;
-		if (this.myactor[0].get_text_direction() == Clutter.TextDirection.RTL) {
-			childBox.x1 = allocWidth - Math.min(allocWidth - rightNaturalWidth,
-												leftNaturalWidth);
-			childBox.x2 = allocWidth;
-		} else {
-			childBox.x1 = 0;
-			childBox.x2 = Math.min(allocWidth - rightNaturalWidth, leftNaturalWidth);
-		}
-		this._leftBox.allocate(childBox, flags);
+        childBox.y1 = 0;
+        childBox.y2 = allocHeight;
+        if (this.myactor[0].get_text_direction() == Clutter.TextDirection.RTL) {
+            childBox.x1 = allocWidth - Math.min(allocWidth - rightNaturalWidth,
+                                                leftNaturalWidth);
+            childBox.x2 = allocWidth;
+        } else {
+            childBox.x1 = 0;
+            childBox.x2 = Math.min(allocWidth - rightNaturalWidth, leftNaturalWidth);
+        }
+        this._leftBox.allocate(childBox, flags);
 
-		childBox.x1 = Math.ceil(sideWidth);
-		childBox.y1 = 0;
-		childBox.x2 = childBox.x1 + centerWidth;
-		childBox.y2 = allocHeight;
-		this._centerBox.allocate(childBox, flags);
+        childBox.x1 = Math.ceil(sideWidth);
+        childBox.y1 = 0;
+        childBox.x2 = childBox.x1 + centerWidth;
+        childBox.y2 = allocHeight;
+        this._centerBox.allocate(childBox, flags);
 
-		childBox.y1 = 0;
-		childBox.y2 = allocHeight;
-		if (this.myactor[0].get_text_direction() == Clutter.TextDirection.RTL) {
-			childBox.x1 = 0;
-			childBox.x2 = Math.min(Math.floor(sideWidth),
-								   rightNaturalWidth);
-		} else {
-			childBox.x1 = allocWidth - Math.min(Math.floor(sideWidth),
-												rightNaturalWidth);
-			childBox.x2 = allocWidth;
-		}
-		this._rightBox.allocate(childBox, flags);
+        childBox.y1 = 0;
+        childBox.y2 = allocHeight;
+        if (this.myactor[0].get_text_direction() == Clutter.TextDirection.RTL) {
+            childBox.x1 = 0;
+            childBox.x2 = Math.min(Math.floor(sideWidth),
+                                   rightNaturalWidth);
+        } else {
+            childBox.x1 = allocWidth - Math.min(Math.floor(sideWidth),
+                                                rightNaturalWidth);
+            childBox.x2 = allocWidth;
+        }
+        this._rightBox.allocate(childBox, flags);
     }
 };
 
@@ -1082,10 +1103,8 @@ function _multirowtaskbarlog(line) {
 //    global.log(line);
 }
 
-function main(metadata, orientation, panel_height) {  
+function main(metadata, orientation, panel_height) {
     _multirowtaskbarlog("main(height:" + panel_height);
     let myApplet = new MyApplet(orientation, panel_height);
-    return myApplet;      
+    return myApplet;
 }
-
-
