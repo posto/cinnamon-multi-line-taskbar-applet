@@ -5,6 +5,7 @@
 //
 // Author: Dumitru Postoronca (https://github.com/posto)
 // Contributors:
+//  * jongough (https://github.com/jongough)
 //  * Balázs Németh (https://github.com/nbali)
 //  * Izzy (https://github.com/IzzySoft)
 //
