@@ -37,17 +37,8 @@ global.stage.get_actor_at_pos(Clutter.PickMode.ALL, 427, 1046).get_parent().get_
 
 **/
 
-/* APPLET SETTINGS */
-// number of rows for the taskbar
-const TASKBAR_ROW_COUNT = 2;
-// minimum number of tasks on one line, before we start filling in the next line
-const MIN_BUTTONS_PER_LINE = 8;
-// shall the taskbar include windows from all workspaces (1) or just from the current workspace (0)?
-const TASKBAR_ALL_WORKSPACES = 1;
-// behavior on clicking the middle mouse button: 0=close window (old style), 1="clone" (Windows-7 style)
-const TASK_MIDDLECLICK_ACTION=1
-
 /* CODE, DO NOT CHANGE ANYTHING BELOW THIS LINE */
+const Settings = imports.ui.settings;
 const Applet = imports.ui.applet;
 const Clutter = imports.gi.Clutter;
 const Lang = imports.lang;
@@ -61,9 +52,6 @@ const Meta = imports.gi.Meta;
 const Tooltips = imports.ui.tooltips;
 const DND = imports.ui.dnd;
 
-const PANEL_ICON_SIZE = 24; // this is for the spinner when loading
-const DEFAULT_ICON_SIZE = 16; // too bad this can't be defined in theme (cinnamon-app.create_icon_texture returns a clutter actor, not a themable object -
-                              // probably something that could be addressed
 const SPINNER_ANIMATION_TIME = 1;
 const ICON_HEIGHT_FACTOR = .64;
 
@@ -270,7 +258,7 @@ function AppMenuButton(applet, metaWindow, animation, orientation, panel_height)
 AppMenuButton.prototype = {
 //    __proto__ : AppMenuButton.prototype,
 
-    _init: function(applet, metaWindow, animation, orientation, panel_height) {
+  _init: function(applet, metaWindow, animation, orientation, panel_height) {
 
     _multirowtaskbarlog("AppMenuButton(" + applet + ", height: " + panel_height);
         this.actor = new St.Bin({ style_class: 'window-list-item-box',
@@ -341,7 +329,7 @@ AppMenuButton.prototype = {
             if (this._tooltip) this._tooltip.set_text(title);
         }));
 
-        this._spinner = new Panel.AnimatedIcon('process-working.svg', PANEL_ICON_SIZE);
+        this._spinner = new Panel.AnimatedIcon('process-working.svg', applet._preferences.panel_icon_size);
         this._container.add_actor(this._spinner.actor);
         this._spinner.actor.lower_bottom();
 
@@ -467,9 +455,9 @@ AppMenuButton.prototype = {
             }
             this._windowHandle(false);
         } else if (Cinnamon.get_event_state(event) & Clutter.ModifierType.BUTTON2_MASK) {
-            if (TASK_MIDDLECLICK_ACTION == 0) {
+            if (this._applet._preferences.task_middleclick_action == 0) {
                 this.metaWindow.delete(global.get_current_time());
-            } else if (TASK_MIDDLECLICK_ACTION == 1) {
+            } else if (this._applet._preferences.task_middleclick_action == 1) {
                 this.app.open_new_window(global.get_current_time());
             }
         } else if (Cinnamon.get_event_state(event) & Clutter.ModifierType.BUTTON3_MASK) {
@@ -653,7 +641,7 @@ AppMenuButton.prototype = {
         this.iconSize = Math.round(panel_height * ICON_HEIGHT_FACTOR);
       }
       else {
-        this.iconSize = DEFAULT_ICON_SIZE;
+        this.iconSize = this._applet._preferences.default_icon_size;
       }
       let icon = this.app ?
                             this.app.create_icon_texture(this.iconSize) :
@@ -757,18 +745,57 @@ MyAppletBox.prototype = {
     }
 }
 
-function MyApplet(orientation, panel_height) {
-    this._init(orientation, panel_height);
+function MyApplet(metadata, orientation, panel_height, instanceId) {
+    this._init(metadata, orientation, panel_height, instanceId);
 }
 
 MyApplet.prototype = {
     __proto__: Applet.Applet.prototype,
 
-    _init: function(orientation, panel_height) {
+    _init: function(metadata, orientation, panel_height, instanceId) {
         _multirowtaskbarlog("MyApplet._init(height: " + panel_height);
 
         Applet.Applet.prototype._init.call(this, orientation, panel_height);
         this.actor.set_track_hover(false);
+
+        this._preferences = {};
+        this.settings = new Settings.AppletSettings(this._preferences, metadata["uuid"], instanceId);
+        this.settings.bindProperty(Settings.BindingDirection.IN,
+                                    "taskbar_row_count",
+                                    "taskbar_row_count",
+                                    this._refreshItems, // this.on_settings_changed,
+                                    null
+                                  );
+        this.settings.bindProperty(Settings.BindingDirection.IN,
+                                    "min_buttons_per_line",
+                                    "min_buttons_per_line",
+                                    this._refreshItems, // this.on_settings_changed,
+                                    null
+                                  );
+        this.settings.bindProperty(Settings.BindingDirection.IN,
+                                    "taskbar_all_workspaces",
+                                    "taskbar_all_workspaces",
+                                    this._refreshItems, // this.on_settings_changed,
+                                    null
+                                  );
+        this.settings.bindProperty(Settings.BindingDirection.IN,
+                                    "task_middleclick_action",
+                                    "task_middleclick_action",
+                                    this._refreshItems, // this.on_settings_changed,
+                                    null
+                                  );
+        this.settings.bindProperty(Settings.BindingDirection.IN,
+                                    "panel_icon_size",
+                                    "panel_icon_size",
+                                    this._refreshItems, // this.on_settings_changed,
+                                    null
+                                  );
+        this.settings.bindProperty(Settings.BindingDirection.IN,
+                                    "default_icon_size",
+                                    "default_icon_size",
+                                    this._refreshItems, // this.on_settings_changed,
+                                    null
+                                  );
 
         try {
             this.orientation = orientation;
@@ -782,10 +809,10 @@ MyApplet.prototype = {
             this.myactorbox = [];
             this.myactor = [];
 
-            _multirowtaskbarlog("TASKBAR_ROW_COUNT=" + TASKBAR_ROW_COUNT);
+            _multirowtaskbarlog("TASKBAR_ROW_COUNT=" + this._preferences.taskbar_row_count);
             _multirowtaskbarlog("Actor-array before=" + this.myactor.length);
 
-            for (let i=0; i<TASKBAR_ROW_COUNT; i++) {
+            for (let i=0; i<this._preferences.taskbar_row_count; i++) {
                 _multirowtaskbarlog("Creating taskbar row " + i);
                 this.myactorbox.push(new MyAppletBox(this));
                 this.myactor.push(this.myactorbox[i].actor); // myactor is St.BoxLayout('windowList')
@@ -904,7 +931,7 @@ MyApplet.prototype = {
             let metaWindow = this._windows[i].metaWindow;
             if (metaWindow.get_workspace().index() == global.screen.get_active_workspace_index()
                       || metaWindow.is_on_all_workspaces()
-                      || TASKBAR_ALL_WORKSPACES == 1) {
+                      || this._preferences.taskbar_all_workspaces == 1) {
                 this._addWindowBtnToTaskbar(this._windows[i], i);
                 this._windows[i].actor.show();
             } else {
@@ -961,7 +988,7 @@ MyApplet.prototype = {
     },
 
     _windowAdded: function(metaWorkspace, metaWindow) {
-try {
+    try {
         _multirowtaskbarlog("_windowAdded(" + metaWindow);
         if (!Main.isInteresting(metaWindow))
             return;
@@ -975,13 +1002,13 @@ try {
         let appbutton = new AppMenuButton(this, metaWindow, true,      this.orientation, this._panelHeight);
         this._windows.push(appbutton);
 
-        if (TASKBAR_ALL_WORKSPACES == 0 && metaWorkspace.index() != global.screen.get_active_workspace_index()) {
+        if (this._preferences.taskbar_all_workspaces == 0 && metaWorkspace.index() != global.screen.get_active_workspace_index()) {
             appbutton.actor.hide();
         } else {
             // add actor only if it should be shown
             this._addWindowBtnToTaskbar(appbutton, this._windows.length - 1);
         }
-} catch (e) {
+    } catch (e) {
             global.logError(e);
         }
 
@@ -990,7 +1017,7 @@ try {
 
     _clearTaskbarItems: function() {
         for ( let i=0; i<this._windows.length; ++i ) {
-            for (let act=0; act<TASKBAR_ROW_COUNT; act++) {
+            for (let act=0; act<this._preferences.taskbar_row_count; act++) {
                 this.myactor[act].remove_actor(this._windows[i].actor);
             }
         }
@@ -1000,10 +1027,10 @@ try {
         _multirowtaskbarlog("adding button to grid...");
 
         let idx = 0;
-        if (this._windows.length <= MIN_BUTTONS_PER_LINE * TASKBAR_ROW_COUNT) {
-            idx = Math.floor(index / MIN_BUTTONS_PER_LINE);
+        if (this._windows.length <= this._preferences.min_buttons_per_line * this._preferences.taskbar_row_count) {
+            idx = Math.floor(index / this._preferences.min_buttons_per_line);
         } else {
-            idx = Math.floor(TASKBAR_ROW_COUNT * index / this._windows.length);
+            idx = Math.floor(this._preferences.taskbar_row_count * index / this._windows.length);
         }
 
         // myactor is an StBoxLayout.windowList -- effectively the taskbar
@@ -1018,7 +1045,7 @@ try {
     _windowRemoved: function(metaWorkspace, metaWindow) {
         for ( let i=0; i<this._windows.length; ++i ) {
             if ( this._windows[i].metaWindow == metaWindow ) {
-                    for (let act=0; act<TASKBAR_ROW_COUNT; act++) {
+                    for (let act=0; act<this._preferences.taskbar_row_count; act++) {
                         this.myactor[act].remove_actor(this._windows[i].actor);
                     }
                 this._windows[i].actor.destroy();
@@ -1104,8 +1131,8 @@ function _multirowtaskbarlog(line) {
 //    global.log(line);
 }
 
-function main(metadata, orientation, panel_height) {
+function main(metadata, orientation, panel_height, instanceId) {
     _multirowtaskbarlog("main(height:" + panel_height);
-    let myApplet = new MyApplet(orientation, panel_height);
+    let myApplet = new MyApplet(metadata, orientation, panel_height, instanceId);
     return myApplet;
 }

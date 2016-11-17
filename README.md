@@ -6,29 +6,26 @@ This is a clone of the original Cinnamon applet that adds support for a multi-li
 Installation
 ------------
 
-1. Download the applet and install to ```~/.local/share/cinnamon/applets/```
-2. Go to Menu > Cinnamon Settings > Applets
+1. Download the applet and install to `~/.local/share/cinnamon/applets/`
+2. Go to *Menu › Cinnamon Settings › Applets*
 3. Ensure applet 'Cinnamon Multi-Line taskbar' is present
 4. Uncheck the default 'Cinnamon Window List'
 5. Enable applet 'Cinnamon Multi-Line taskbar'
-6. Go to Menu > Cinnamon Settings > Panel
+6. Go to *Menu › Cinnamon Settings › Panel*
 7. Check 'Use customized panel size'
 8. Set bottom height to something around 35-70 pixels (depending on your theme and number of rows for the taskbar)
 
 Configuring the applet
 ----------------------
-1. File `applet.js` contains a few constants, which you can adjust to meet your wishes:
-    * `TASKBAR_ROW_COUNT`: number of rows for the taskbar
-    * `MIN_BUTTONS_PER_LINE`: minimum number of tasks on one line, before we start filling in the next line
-    * `TASKBAR_ALL_WORKSPACES`: shall the taskbar include windows from all workspaces (1) or just from the current workspace (0)?
-    * `TASK_MIDDLECLICK_ACTION`: behavior on clicking the middle mouse button: 0=close window (old style), 1="clone" (Windows-7 style)
-    * `PANEL_ICON_SIZE`: this is for the spinner when loading
-    * `DEFAULT_ICON_SIZE`: height of the tasks themselves
-2. Restart Cinnamon to see the changes
+While the applet ships with sane default settings, you can adjust them via its
+settings GUI:
+
+1. Go to *Menu › Cinnamon Settings › Applets*
+2. Right-click *Cinnamon Multi-Line Taskbar*, select *Configure*
+3. Adjust the values to your wishes
+4. Restart Cinnamon to see the changes (unfortunately, that's necessary)
 
 Known issues
 ------------
 1. Drag-and-Drop (reorder) functionality of the bottom bar might not work
-
-
-
+2. Configuration changes require Cinnamon Restart to take effect
