@@ -1,4 +1,8 @@
 {
+    "head" : {
+        "type" : "header",
+        "description" : "Taskbar size"
+    },
     "taskbar_row_count": {
         "type" : "spinbutton",
         "default" : 2,
@@ -6,7 +10,7 @@
         "max" : 5,
         "units": "rows",
         "step" : 1,
-        "description" : "number of rows for the taskbar"
+        "description" : "number of rows for the taskbar:"
     },
     "min_buttons_per_line": {
         "type" : "spinbutton",
@@ -15,21 +19,7 @@
         "max" : 20,
         "units": "buttons",
         "step" : 1,
-        "description" : "minimum number of tasks on one line, before we start filling in the next line"
-    },
-    "taskbar_all_workspaces": {
-        "type": "checkbox",
-        "default": true,
-        "description" : "include windows from all workspaces?"
-    },
-    "task_middleclick_action": {
-        "type": "radiogroup",
-        "default": 1,
-        "description" : "behavior on clicking the middle mouse button on a task",
-        "options" : {
-            "close window": 0,
-            "duplicate window": 1
-        }
+        "description" : "minimum number of tasks on one line, before we start filling in the next line:"
     },
     "panel_icon_size": {
         "type": "spinbutton",
@@ -38,7 +28,7 @@
         "max": 48,
         "units": "pixel",
         "step": 1,
-        "description": "icon size for the spinner when loading"
+        "description": "icon size for the spinner when loading:"
     },
     "default_icon_size": {
         "type": "spinbutton",
@@ -47,6 +37,27 @@
         "max": 48,
         "units": "pixel",
         "step": 1,
-        "description": "icon size for the task icons (defines row height)"
+        "description": "icon size for the task icons (defines row height):"
+    },
+    "div1" : {
+        "type" : "separator"
+    },
+    "head1" : {
+        "type" : "header",
+        "description" : "Behavior"
+    },
+    "taskbar_all_workspaces": {
+        "type": "checkbox",
+        "default": true,
+        "description" : "include windows from all workspaces"
+    },
+    "task_middleclick_action": {
+        "type": "radiogroup",
+        "default": 1,
+        "description" : "behavior on clicking the middle mouse button on a task:",
+        "options" : {
+            "close window": 0,
+            "duplicate window": 1
+        }
     }
 }
