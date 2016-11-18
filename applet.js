@@ -57,6 +57,8 @@ const ICON_HEIGHT_FACTOR = .64;
 
 _multirowtaskbarlog("MULTI-ROW APPLET INITIALIZING");
 
+
+// =======================================================[ RightClickMenu ]===
 function AppMenuButtonRightClickMenu(actor, metaWindow, orientation) {
     this._init(actor, metaWindow, orientation);
 }
@@ -251,6 +253,8 @@ AppMenuButtonRightClickMenu.prototype = {
 
 };
 
+
+// =====================================================[ AppletMenuButton ]===
 function AppMenuButton(applet, metaWindow, animation, orientation, panel_height) {
     this._init(applet, metaWindow, animation, orientation, panel_height / 2);
 }
@@ -652,6 +656,8 @@ AppMenuButton.prototype = {
     }
 };
 
+
+// ========================================================[ The Appletbox ]===
 function MyAppletBox(applet) {
     this._init(applet);
 }
@@ -745,6 +751,8 @@ MyAppletBox.prototype = {
     }
 }
 
+
+// ====================================================[ The Applet itself ]===
 function MyApplet(metadata, orientation, panel_height, instanceId) {
     this._init(metadata, orientation, panel_height, instanceId);
 }
@@ -758,44 +766,15 @@ MyApplet.prototype = {
         Applet.Applet.prototype._init.call(this, orientation, panel_height);
         this.actor.set_track_hover(false);
 
+        // bind preferences from settings GUI to our properties
         this._preferences = {};
         this.settings = new Settings.AppletSettings(this._preferences, metadata["uuid"], instanceId);
-        this.settings.bindProperty(Settings.BindingDirection.IN,
-                                    "taskbar_row_count",
-                                    "taskbar_row_count",
-                                    this._refreshItems, // this.on_settings_changed,
-                                    null
-                                  );
-        this.settings.bindProperty(Settings.BindingDirection.IN,
-                                    "min_buttons_per_line",
-                                    "min_buttons_per_line",
-                                    this._refreshItems, // this.on_settings_changed,
-                                    null
-                                  );
-        this.settings.bindProperty(Settings.BindingDirection.IN,
-                                    "taskbar_all_workspaces",
-                                    "taskbar_all_workspaces",
-                                    this._refreshItems, // this.on_settings_changed,
-                                    null
-                                  );
-        this.settings.bindProperty(Settings.BindingDirection.IN,
-                                    "task_middleclick_action",
-                                    "task_middleclick_action",
-                                    this._refreshItems, // this.on_settings_changed,
-                                    null
-                                  );
-        this.settings.bindProperty(Settings.BindingDirection.IN,
-                                    "panel_icon_size",
-                                    "panel_icon_size",
-                                    this._refreshItems, // this.on_settings_changed,
-                                    null
-                                  );
-        this.settings.bindProperty(Settings.BindingDirection.IN,
-                                    "default_icon_size",
-                                    "default_icon_size",
-                                    this._refreshItems, // this.on_settings_changed,
-                                    null
-                                  );
+        this.settings.bindProperty(Settings.BindingDirection.IN,"taskbar_row_count","taskbar_row_count",this.on_settings_changed,null);
+        this.settings.bindProperty(Settings.BindingDirection.IN,"min_buttons_per_line","min_buttons_per_line",this.on_settings_changed,null);
+        this.settings.bindProperty(Settings.BindingDirection.IN,"taskbar_all_workspaces","taskbar_all_workspaces",this.on_settings_changed,null);
+        this.settings.bindProperty(Settings.BindingDirection.IN,"task_middleclick_action","task_middleclick_action",this.on_settings_changed,null);
+        this.settings.bindProperty(Settings.BindingDirection.IN,"panel_icon_size","panel_icon_size",this.on_settings_changed,null);
+        this.settings.bindProperty(Settings.BindingDirection.IN,"default_icon_size","default_icon_size",this.on_settings_changed,null);
 
         try {
             this.orientation = orientation;
@@ -891,6 +870,12 @@ MyApplet.prototype = {
         catch (e) {
             global.logError(e);
         }
+    },
+
+    on_settings_changed: function() {
+      // could not yet figure an automatic action to make the changes visible
+      // manual work-arounds: see https://github.com/posto/cinnamon-multi-line-taskbar-applet/issues/7#issuecomment-261635031
+      // this._refreshItems();
     },
 
     on_applet_clicked: function(event) {
@@ -1127,10 +1112,14 @@ MyApplet.prototype = {
     }
 };
 
+
+// =========================================[ Logging (for Debug purposes) ]===
 function _multirowtaskbarlog(line) {
 //    global.log(line);
 }
 
+
+// =================================================================[ Main ]===
 function main(metadata, orientation, panel_height, instanceId) {
     _multirowtaskbarlog("main(height:" + panel_height);
     let myApplet = new MyApplet(metadata, orientation, panel_height, instanceId);
