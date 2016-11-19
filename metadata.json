@@ -1,6 +1,9 @@
 {
     "uuid": "cinnamon-multi-line-taskbar-applet",
-    "name": "Cinnamon Multi-Line Taskbar"
-    "description": "https://github.com/posto/cinnamon-multi-line-taskbar-applet",
-    "icon": "gnome-panel-window-list"
+    "name": "Cinnamon Multi-Line Taskbar",
+    "description": "Clone of the original Cinnamon applet that adds support for a multi-line taskbar",
+    "url": "https://github.com/posto/cinnamon-multi-line-taskbar-applet",
+    "original-authors" : ["posto"],
+    "icon": "gnome-panel-window-list",
+    "version": "1.0"
 }
